@@ -80,6 +80,7 @@ func Run(onReady func(), onExit func()) {
 // To overcome some OS weirdness, On macOS versions before Catalina, calling
 // this does exactly the same as Run().
 func Register(onReady func(), onExit func()) {
+
 	if onReady == nil {
 		systrayReady = func() {}
 	} else {
@@ -98,8 +99,10 @@ func Register(onReady func(), onExit func()) {
 	if onExit == nil {
 		onExit = func() {}
 	}
-	systrayExit = onExit
+
 	registerSystray()
+
+	systrayExit = onExit
 }
 
 // Quit the systray

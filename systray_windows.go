@@ -12,6 +12,7 @@ import (
 	"sync"
 	"syscall"
 	"unsafe"
+
 	"github.com/polevpn/elog"
 	"golang.org/x/sys/windows"
 )
@@ -258,7 +259,7 @@ func (t *winTray) wndProc(hWnd windows.Handle, message uint32, wParam, lParam ui
 	)
 	switch message {
 	case WM_CREATE:
-		systrayReady()
+		//systrayReady()
 	case WM_COMMAND:
 		menuItemId := int32(wParam)
 		// https://docs.microsoft.com/en-us/windows/win32/menurc/wm-command#menus
@@ -420,8 +421,6 @@ func (t *winTray) initInstance() error {
 		uintptr(t.window),
 	)
 
-	t.muNID.Lock()
-	defer t.muNID.Unlock()
 	t.nid = &notifyIconData{
 		Wnd:             windows.Handle(t.window),
 		ID:              100,
@@ -430,7 +429,11 @@ func (t *winTray) initInstance() error {
 	}
 	t.nid.Size = uint32(unsafe.Sizeof(*t.nid))
 
-	return t.nid.add()
+	err = t.nid.add()
+
+	systrayReady()
+
+	return err
 }
 
 func (t *winTray) createMenu() error {
